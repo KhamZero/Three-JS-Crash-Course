@@ -19,6 +19,15 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
             document.body.appendChild(renderer.domElement);
 
+            // update the viewport when the browser screen size changes
+            window.addEventListener('resize', function() {
+                const width = window.innerWidth;
+                const height = window.innerHeight;
+                renderer.setSize(width, height);
+                camera.aspect = width / height;
+                camera.updateProjectionMatrix();
+            })
+
             // create shape
             const geometry = new THREE.BoxGeometry(1, 1, 1);
 
