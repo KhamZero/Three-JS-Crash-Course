@@ -10,6 +10,7 @@
 
     <body>
         <script src="js/three.js"></script>
+        <script src="js/OrbitControls.js"></script>
         
         <script>
             const scene = new THREE.Scene();
@@ -19,25 +20,79 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
             document.body.appendChild(renderer.domElement);
 
+            // update the viewport when the browser screen size changes
+            window.addEventListener('resize', function() {
+                const width = window.innerWidth;
+                const height = window.innerHeight;
+                renderer.setSize(width, height);
+                camera.aspect = width / height;
+                camera.updateProjectionMatrix();
+            })
+
+            // set orbit controls
+            const controls = new THREE.OrbitControls(camera, renderer.domElement);
+
             // create shape
             const geometry = new THREE.BoxGeometry(1, 1, 1);
 
+            // create materials for cube where each face has some image or color
+            const cubeMaterials = [
+                new THREE.MeshLambertMaterial({map: new THREE.TextureLoader().load('images/p1.png'), side: THREE.FrontSide}), // right side of the cube (FrontSide - can see the texture from front only)
+                new THREE.MeshPhongMaterial({map: new THREE.TextureLoader().load('images/p2.png'), side: THREE.BackSide}), // left side of the cube (BackSide - can see the texture from back only)
+                new THREE.MeshLambertMaterial({color: 0xFFFFFF, side: THREE.DoubleSide}), // top side of the cube
+                new THREE.MeshLambertMaterial({color: 0x000000, side: THREE.DoubleSide}), // bottom side of the cube
+                new THREE.MeshLambertMaterial({map: new THREE.TextureLoader().load('images/p5.png'), side: THREE.DoubleSide}), // front side of the cube
+                new THREE.MeshLambertMaterial({map: new THREE.TextureLoader().load('images/p6.png'), side: THREE.DoubleSide}), // back side of the cube
+            ];
+
             // create material - color or image texture
-            const material = new THREE.MeshBasicMaterial({color: 0xFFFFFF, wireframe: true});
+            const material = new THREE.MeshFaceMaterial(cubeMaterials);
 
             // create cube object
             const cube = new THREE.Mesh(geometry, material);
 
+            // create ambient light
+            const ambientLight = new THREE.AmbientLight(0xFFFFFF, 0.8);
+
+            // create and add point light 1
+            const pointLight1 = new THREE.PointLight(0xFF0040, 4, 50);
+            scene.add(pointLight1);
+
+            // create and add point light 2
+            const pointLight2 = new THREE.PointLight(0x0040FF, 3, 50);
+            scene.add(pointLight2);
+
+            // create and add point light 3
+            const pointLight3 = new THREE.PointLight(0x80FF80, 4, 50);
+            scene.add(pointLight3);
+
             // add cube to scene
             scene.add(cube);
+
+            // add ambient light to scene
+            scene.add(ambientLight);
 
             // set camera position
             camera.position.z = 3;
 
             // game logic
             const update = function() {
-                cube.rotation.x += 0.01;
-                cube.rotation.y += 0.005;
+                // cube.rotation.x += 0.01;
+                // cube.rotation.y += 0.005;
+
+                const time = Date.now() * 0.0005;
+
+                pointLight1.position.x = Math.sin(time * 0.7) * 30;
+                pointLight1.position.y = Math.cos(time * 0.5) * 40;
+                pointLight1.position.z = Math.cos(time * 0.3) * 30;
+
+                pointLight2.position.x = Math.cos(time * 0.3) * 30;
+                pointLight2.position.y = Math.sin(time * 0.5) * 40;
+                pointLight2.position.z = Math.sin(time * 0.7) * 30;
+
+                pointLight3.position.x = Math.sin(time * 0.7) * 30;
+                pointLight3.position.y = Math.cos(time * 0.3) * 40;
+                pointLight3.position.z = Math.sin(time * 0.5) * 30;
             };
 
             // draw scene
