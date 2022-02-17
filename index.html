@@ -34,19 +34,35 @@
             const controls = new THREE.OrbitControls(camera, renderer.domElement);
 
             // create shape
+            const geometry = new THREE.BoxGeometry(1000, 1000, 1000);
 
             // create materials for cube where each face has some image or color
             const cubeMaterials = [
+                new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load('images/skyboxes/Yokohama/right.jpg'), side: THREE.DoubleSide}), // right side of the cube
+                new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load('images/skyboxes/Yokohama/left.jpg'), side: THREE.DoubleSide}), // left side of the cube
+                new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load('images/skyboxes/Yokohama/up.jpg'), side: THREE.DoubleSide}), // top side of the cube
+                new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load('images/skyboxes/Yokohama/down.jpg'), side: THREE.DoubleSide}), // bottom side of the cube
+                new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load('images/skyboxes/Yokohama/front.jpg'), side: THREE.DoubleSide}), // front side of the cube
+                new THREE.MeshBasicMaterial({map: new THREE.TextureLoader().load('images/skyboxes/Yokohama/back.jpg'), side: THREE.DoubleSide}), // back side of the cube
             ];
 
             // create material - color or image texture
+            const cubeMaterial = new THREE.MeshFaceMaterial(cubeMaterials);
 
+            // set ambient light
+            const ambientLight = new THREE.AmbientLight(0xFFFFFF, 1.0);
 
+            // add ambient light to scene
+            scene.add(ambientLight);
 
+            // create cube
+            const cube = new THREE.Mesh(geometry, cubeMaterial)
 
             // add cube to scene
+            scene.add(cube)
 
             // set camera position
+            camera.position.z = 1;
 
             // game logic
             const update = function() {
